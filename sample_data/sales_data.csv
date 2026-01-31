@@ -1,0 +1,63 @@
+date,product_category,product_name,region,sales_amount,quantity,customer_id,customer_segment
+2025-01-01,Electronics,Laptop Pro,North,1299.99,2,C001,Enterprise
+2025-01-01,Electronics,Wireless Mouse,North,29.99,5,C002,Consumer
+2025-01-02,Furniture,Office Chair,South,349.99,3,C003,Small Business
+2025-01-02,Electronics,USB Hub,East,49.99,10,C001,Enterprise
+2025-01-03,Office Supplies,Printer Paper,West,24.99,20,C004,Consumer
+2025-01-03,Furniture,Standing Desk,North,599.99,1,C005,Enterprise
+2025-01-04,Electronics,Monitor 27",South,399.99,4,C006,Small Business
+2025-01-04,Office Supplies,Pens Pack,East,12.99,50,C007,Consumer
+2025-01-05,Electronics,Keyboard,West,89.99,8,C008,Enterprise
+2025-01-05,Furniture,Filing Cabinet,North,199.99,2,C009,Small Business
+2025-01-06,Electronics,Webcam HD,South,79.99,6,C010,Consumer
+2025-01-06,Office Supplies,Sticky Notes,East,8.99,100,C002,Consumer
+2025-01-07,Furniture,Bookshelf,West,249.99,2,C011,Enterprise
+2025-01-07,Electronics,Headphones,North,149.99,5,C012,Consumer
+2025-01-08,Office Supplies,Stapler,South,15.99,15,C013,Small Business
+2025-01-08,Electronics,External SSD,East,129.99,7,C014,Enterprise
+2025-01-09,Furniture,Conference Table,West,899.99,1,C015,Enterprise
+2025-01-09,Electronics,Tablet,North,449.99,3,C001,Enterprise
+2025-01-10,Office Supplies,Binders,South,22.99,25,C016,Consumer
+2025-01-10,Electronics,Smart Speaker,East,99.99,12,C017,Consumer
+2025-01-11,Furniture,Ergonomic Chair,West,549.99,2,C018,Enterprise
+2025-01-11,Electronics,Laptop Pro,North,1299.99,4,C019,Enterprise
+2025-01-12,Office Supplies,Notebooks,South,18.99,30,C020,Small Business
+2025-01-12,Electronics,Wireless Charger,East,39.99,15,C021,Consumer
+2025-01-13,Furniture,Desk Lamp,West,69.99,8,C022,Consumer
+2025-01-13,Electronics,Gaming Mouse,North,79.99,6,C023,Consumer
+2025-01-14,Office Supplies,Highlighters,South,9.99,40,C024,Consumer
+2025-01-14,Electronics,USB-C Cable,East,19.99,25,C025,Small Business
+2025-01-15,Furniture,Office Desk,West,449.99,2,C026,Enterprise
+2025-01-15,Electronics,Power Bank,North,59.99,10,C027,Consumer
+2025-01-16,Office Supplies,Paper Clips,South,5.99,60,C028,Consumer
+2025-01-16,Electronics,Bluetooth Speaker,East,89.99,8,C029,Consumer
+2025-01-17,Furniture,Meeting Chair,West,179.99,6,C030,Enterprise
+2025-01-17,Electronics,Monitor 32",North,599.99,2,C031,Enterprise
+2025-01-18,Office Supplies,Tape Dispenser,South,12.99,20,C032,Small Business
+2025-01-18,Electronics,Webcam 4K,East,149.99,4,C033,Enterprise
+2025-01-19,Furniture,Storage Cabinet,West,329.99,1,C034,Small Business
+2025-01-19,Electronics,Mechanical Keyboard,North,129.99,5,C035,Consumer
+2025-01-20,Office Supplies,Folders,South,14.99,35,C036,Consumer
+2025-01-20,Electronics,Laptop Stand,East,49.99,12,C037,Enterprise
+2025-01-21,Furniture,Whiteboard,West,89.99,3,C038,Small Business
+2025-01-21,Electronics,Docking Station,North,199.99,4,C039,Enterprise
+2025-01-22,Office Supplies,Scissors,South,7.99,18,C040,Consumer
+2025-01-22,Electronics,Graphics Tablet,East,299.99,2,C041,Consumer
+2025-01-23,Furniture,Reception Desk,West,799.99,1,C042,Enterprise
+2025-01-23,Electronics,Wi-Fi Router,North,129.99,6,C043,Small Business
+2025-01-24,Office Supplies,Envelopes,South,11.99,45,C044,Consumer
+2025-01-24,Electronics,Smart Watch,East,249.99,5,C045,Consumer
+2025-01-25,Furniture,Coat Rack,West,59.99,4,C046,Small Business
+2025-01-25,Electronics,Noise Canceling Headphones,North,299.99,3,C047,Enterprise
+2025-01-26,Office Supplies,Markers,South,16.99,28,C048,Consumer
+2025-01-26,Electronics,Portable Monitor,East,279.99,3,C049,Enterprise
+2025-01-27,Furniture,Task Chair,West,299.99,4,C050,Enterprise
+2025-01-27,Electronics,USB Microphone,North,119.99,7,C051,Consumer
+2025-01-28,Office Supplies,Label Maker,South,34.99,8,C052,Small Business
+2025-01-28,Electronics,Action Camera,East,349.99,2,C053,Consumer
+2025-01-29,Furniture,Room Divider,West,189.99,2,C054,Enterprise
+2025-01-29,Electronics,E-Reader,North,139.99,6,C055,Consumer
+2025-01-30,Office Supplies,Calendar,South,12.99,22,C056,Consumer
+2025-01-30,Electronics,VR Headset,East,499.99,2,C057,Consumer
+2025-01-31,Furniture,Executive Desk,West,699.99,1,C058,Enterprise
+2025-01-31,Electronics,Laptop Pro,North,1299.99,5,C059,Enterprise
