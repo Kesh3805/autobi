@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import FileUpload from '@/components/FileUpload'
 import QueryInterface from '@/components/QueryInterface'
 import DataTable from '@/components/DataTable'
@@ -11,7 +11,10 @@ import QueryHistory, { useQueryHistory } from '@/components/QueryHistory'
 import SummaryStats from '@/components/SummaryStats'
 import { QueryResultSkeleton, ChartSkeleton, InsightSkeleton } from '@/components/LoadingSkeleton'
 import ThemeToggle from '@/components/ThemeToggle'
-import { Database, BarChart3, Wifi, WifiOff, RefreshCw, History, X } from 'lucide-react'
+import { useToast } from '@/context/ToastContext'
+import { useTheme } from '@/context/ThemeContext'
+import { useAppShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { Database, BarChart3, Wifi, WifiOff, RefreshCw, History, X, Keyboard } from 'lucide-react'
 
 interface TableInfo {
   name: string
@@ -41,8 +44,24 @@ export default function Home() {
   const [backendStatus, setBackendStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const [showHistory, setShowHistory] = useState(false)
   
-  // Query history hook
+  // Refs
+  const queryInputRef = useRef<HTMLInputElement>(null)
+  
+  // Hooks
   const { history, addToHistory, removeFromHistory, clearHistory } = useQueryHistory()
+  const toast = useToast()
+  const { toggleTheme } = useTheme()
+
+  // Keyboard shortcuts
+  useAppShortcuts({
+    onSearch: () => queryInputRef.current?.focus(),
+    onEscape: () => {
+      if (showHistory) setShowHistory(false)
+      else if (error) setError(null)
+    },
+    onToggleTheme: toggleTheme,
+    onToggleHistory: () => setShowHistory(prev => !prev),
+  })
 
   const API_BASE = 'http://localhost:8000'
 
@@ -128,8 +147,11 @@ export default function Home() {
       await fetchTables()
       setSelectedTable(data.table_name)
       await fetchSchema(data.table_name)
+      
+      toast.success('File uploaded successfully', `${data.row_count.toLocaleString()} rows imported to "${data.table_name}"`)
     } catch (e: any) {
       setError(e.message)
+      toast.error('Upload failed', e.message)
     } finally {
       setIsLoading(false)
     }
@@ -138,6 +160,7 @@ export default function Home() {
   const handleQuery = async (question: string) => {
     if (!selectedTable) {
       setError('Please upload data first')
+      toast.warning('No data', 'Please upload a CSV file first')
       return
     }
 
@@ -170,8 +193,14 @@ export default function Home() {
         rowCount: data.row_count,
         executionTime: data.execution_time_ms
       })
+      
+      toast.success(
+        `Query completed`,
+        `${data.row_count.toLocaleString()} rows in ${data.execution_time_ms}ms`
+      )
     } catch (e: any) {
       setError(e.message)
+      toast.error('Query failed', e.message)
     } finally {
       setIsLoading(false)
     }

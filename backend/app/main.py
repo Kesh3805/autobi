@@ -3,31 +3,65 @@ AutoBI Backend - FastAPI Application
 LLM-Powered Data Explorer with DuckDB + LangChain
 """
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 from typing import Optional, List, Any
 import os
+import uuid
 
 from app.database import DatabaseManager
 from app.schema_profiler import SchemaProfiler
 from app.query_engine import QueryEngine
 from app.insight_engine import InsightEngine
 from app.chart_selector import ChartSelector
+from app.cache import (
+    schema_cache, query_cache, get_cached_schema, 
+    cache_schema, get_cached_query, cache_query_result,
+    invalidate_table_cache
+)
+from app.logging_utils import (
+    log_info, log_error, log_warning, log_query, 
+    log_upload, log_error_detail, RequestContext, log_timing
+)
 
 app = FastAPI(
     title="AutoBI",
     description="LLM-Powered Data Explorer",
-    version="1.0.0"
+    version="1.1.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def add_request_context(request: Request, call_next):
+    """Add request ID and logging to all requests."""
+    request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())[:8]
+    RequestContext.set_request_id(request_id)
+    
+    log_info(f"{request.method} {request.url.path}")
+    
+    try:
+        response = await call_next(request)
+        log_info(f"Completed with status {response.status_code}")
+        response.headers["X-Request-ID"] = request_id
+        return response
+    except Exception as e:
+        log_error_detail(e, f"{request.method} {request.url.path}")
+        raise
+    finally:
+        RequestContext.clear()
+
 
 # Initialize components
 db_manager = DatabaseManager()
@@ -38,8 +72,8 @@ chart_selector = ChartSelector()
 
 
 class QueryRequest(BaseModel):
-    question: str
-    table_name: Optional[str] = None
+    question: str = Field(..., min_length=1, max_length=1000)
+    table_name: Optional[str] = Field(None, max_length=100)
 
 
 class QueryResponse(BaseModel):
