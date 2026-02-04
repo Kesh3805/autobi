@@ -54,25 +54,45 @@ class QueryEngine:
         self._init_llm()
     
     def _init_llm(self):
-        """Initialize LangChain with OpenAI."""
-        api_key = os.getenv("OPENAI_API_KEY")
-        if api_key and api_key != "your_openai_api_key_here" and len(api_key) > 20:
+        """Initialize LangChain with OpenAI or Gemini."""
+        # Try Gemini first
+        gemini_key = os.getenv("GEMINI_API_KEY")
+        if gemini_key and gemini_key != "your_gemini_api_key_here" and len(gemini_key) > 20:
+            try:
+                from langchain_google_genai import ChatGoogleGenerativeAI
+                self.llm = ChatGoogleGenerativeAI(
+                    model="gemini-1.5-flash",
+                    temperature=0,
+                    google_api_key=gemini_key,
+                    convert_system_message_to_human=True
+                )
+                self.llm_available = True
+                print("✓ LLM initialized successfully (Gemini)")
+                return
+            except ImportError:
+                print("⚠ langchain-google-genai not installed, trying OpenAI")
+            except Exception as e:
+                print(f"⚠ Gemini initialization failed: {e}, trying OpenAI")
+        
+        # Fallback to OpenAI
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if openai_key and openai_key != "your_openai_api_key_here" and len(openai_key) > 20:
             try:
                 from langchain_openai import ChatOpenAI
                 self.llm = ChatOpenAI(
                     model="gpt-4o-mini",
                     temperature=0,
-                    api_key=api_key,
+                    api_key=openai_key,
                     request_timeout=30
                 )
                 self.llm_available = True
-                print("✓ LLM initialized successfully")
+                print("✓ LLM initialized successfully (OpenAI)")
             except ImportError:
                 print("⚠ langchain-openai not installed, using fallback")
             except Exception as e:
                 print(f"⚠ LLM initialization failed: {e}")
         else:
-            print("ℹ No OpenAI API key configured, using rule-based SQL generation")
+            print("ℹ No API key configured, using rule-based SQL generation")
     
     def process_question(
         self, 

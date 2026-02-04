@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, KeyboardEvent } from 'react'
+import { useState, useRef, useEffect, useMemo, KeyboardEvent } from 'react'
 import { Search, Loader2, Sparkles, Mic, MicOff, Clock, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -31,26 +31,21 @@ const SMART_SUGGESTIONS = [
 
 export default function QueryInterface({ onQuery, isLoading, recentQueries = [] }: QueryInterfaceProps) {
   const [question, setQuestion] = useState('')
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [showSuggestionsState, setShowSuggestionsState] = useState(false)
   const [selectedSuggestion, setSelectedSuggestion] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const suggestionsRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    // Update suggestions based on input
+  // Compute suggestions inline without storing in state to avoid infinite loops
+  const suggestions = useMemo(() => {
     if (!question.trim()) {
-      setSuggestions([])
-      setShowSuggestions(false)
-      return
+      return []
     }
 
     // Check smart suggestions
     for (const { pattern, suggestions: sugg } of SMART_SUGGESTIONS) {
       if (pattern.test(question)) {
-        setSuggestions(sugg)
-        setShowSuggestions(true)
-        return
+        return sugg
       }
     }
 
@@ -61,14 +56,16 @@ export default function QueryInterface({ onQuery, isLoading, recentQueries = [] 
       .filter(ex => ex.toLowerCase().includes(q) && ex.toLowerCase() !== q)
       .slice(0, 5)
     
-    setSuggestions(filtered)
-    setShowSuggestions(filtered.length > 0)
+    return filtered
   }, [question, recentQueries])
+
+  // Compute whether to show suggestions without state updates
+  const showSuggestions = showSuggestionsState && suggestions.length > 0 && question.trim().length > 0
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (suggestionsRef.current && !suggestionsRef.current.contains(e.target as Node)) {
-        setShowSuggestions(false)
+        setShowSuggestionsState(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -78,7 +75,7 @@ export default function QueryInterface({ onQuery, isLoading, recentQueries = [] 
   const handleSubmit = () => {
     if (question.trim() && !isLoading) {
       onQuery(question.trim())
-      setShowSuggestions(false)
+      setShowSuggestionsState(false)
     }
   }
 
@@ -86,7 +83,7 @@ export default function QueryInterface({ onQuery, isLoading, recentQueries = [] 
     if (e.key === 'Enter') {
       if (selectedSuggestion >= 0 && suggestions[selectedSuggestion]) {
         setQuestion(suggestions[selectedSuggestion])
-        setShowSuggestions(false)
+        setShowSuggestionsState(false)
         setSelectedSuggestion(-1)
       } else {
         handleSubmit()
@@ -98,14 +95,14 @@ export default function QueryInterface({ onQuery, isLoading, recentQueries = [] 
       e.preventDefault()
       setSelectedSuggestion(prev => Math.max(prev - 1, -1))
     } else if (e.key === 'Escape') {
-      setShowSuggestions(false)
+      setShowSuggestionsState(false)
       setSelectedSuggestion(-1)
     }
   }
 
   const selectSuggestion = (suggestion: string) => {
     setQuestion(suggestion)
-    setShowSuggestions(false)
+    setShowSuggestionsState(false)
     setSelectedSuggestion(-1)
     inputRef.current?.focus()
   }
@@ -126,7 +123,7 @@ export default function QueryInterface({ onQuery, isLoading, recentQueries = [] 
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={handleKeyDown}
-            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            onFocus={() => suggestions.length > 0 && setShowSuggestionsState(true)}
             placeholder="e.g., Show me total revenue by product category..."
             className={clsx(
               'w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg text-gray-900',
